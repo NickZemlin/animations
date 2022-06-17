@@ -1,6 +1,8 @@
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
 	import { animations } from '../../animationsList/animationsList';
+	import router from '../../router/router';
+	import { useAppStore } from '../../store/AppStore';
 
 	const emit = defineEmits(['leftResize', 'hover']);
 
@@ -50,6 +52,10 @@
 	const hover = (value: boolean) => {
 		emit('hover', value);
 	};
+
+	const navigateTo = (route: string) => {
+		router.push({ path: route });
+	};
 	onMounted(() => {
 		if (leftSideWrap.value && resizer.value) {
 			makeResizableDiv(leftSideWrap.value, resizer.value);
@@ -71,8 +77,9 @@
 			<div
 				class="leftSide-animationsList-animation"
 				v-for="animation in animations"
+				@click="navigateTo(animation.route)"
 			>
-				<h4>{{ animation.name }}</h4>
+				<h5>{{ animation.name }}</h5>
 			</div>
 		</div>
 	</div>

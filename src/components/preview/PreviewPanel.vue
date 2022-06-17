@@ -14,7 +14,9 @@
 </script>
 
 <template>
-	<div class="preview-wrap"></div>
+	<div class="preview-wrap">
+		<router-view />
+	</div>
 </template>
 
 <style scoped lang="scss">
