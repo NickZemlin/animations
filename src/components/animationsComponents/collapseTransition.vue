@@ -3,6 +3,12 @@ import { ref } from "vue";
 import CustomButton from "../ui/CustomButton.vue";
 import ControlPanel from "../ui/ControlPanel.vue";
 import CustomSlider from "../ui/CustomSlider.vue";
+import CustomRadio from "../ui/CustomRadio.vue";
+import CustomDescription from "../ui/CustomDescription.vue";
+import { timingFunctions } from "../../animationsList/animationsList";
+import LongListExample from "../testExamples/longListExample.vue";
+import { computed } from "@vue/reactivity";
+import { useRoute } from "vue-router";
 
 interface Settings {
   duration: number;
@@ -12,6 +18,8 @@ interface Settings {
   opacityOpened: number;
   appear?: boolean;
 }
+
+const route = useRoute();
 
 const settings = ref<Settings>({
   duration: 250,
@@ -137,7 +145,22 @@ function leaveTransition(element: Element, done: () => void) {
   animateTransition(HTMLElement, initialStyle, done, keyframes, options);
 }
 
-const show = ref(false);
+const updateTimingFunction = (value: string, intent: "in" | "out") => {
+  switch (intent) {
+    case "in":
+      settings.value.easingEnter = value;
+      break;
+    case "out":
+      settings.value.easingLeave = value;
+      break;
+  }
+};
+
+const description = computed(() => {
+  return route.meta.description as string;
+});
+
+const show = ref(true);
 const toggleAnimation = () => {
   show.value = !show.value;
 };
@@ -148,6 +171,7 @@ const toggleAnimation = () => {
     <CustomButton @click="toggleAnimation">play</CustomButton>
   </ControlPanel>
   <teleport to="#Settings">
+    <CustomDescription :text="description" />
     <CustomSlider
       v-model="settings.duration"
       :value="settings.duration"
@@ -172,6 +196,16 @@ const toggleAnimation = () => {
       :default="settings.opacityClosed"
       :min="0"
     />
+    <CustomRadio
+      :selection="timingFunctions"
+      header="Timing Function In"
+      @update="updateTimingFunction($event, 'in')"
+    />
+    <CustomRadio
+      :selection="timingFunctions"
+      header="Timing Function Out"
+      @update="updateTimingFunction($event, 'out')"
+    />
   </teleport>
   <Transition
     :css="false"
@@ -179,7 +213,9 @@ const toggleAnimation = () => {
     @leave="leaveTransition"
     :appear="settings.appear"
   >
-    <h1 v-if="show">test</h1>
+    <div v-if="show" style="padding: 5px">
+      <LongListExample />
+    </div>
   </Transition>
 </template>
 

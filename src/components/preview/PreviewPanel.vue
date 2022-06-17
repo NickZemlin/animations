@@ -7,10 +7,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   previewHeight: "auto",
 });
-
-onMounted(() => {
-  console.log(props.previewHeight);
-});
 </script>
 
 <template>
@@ -23,6 +19,7 @@ onMounted(() => {
 .preview {
   &-wrap {
     width: 100%;
+    overflow: hidden;
     height: v-bind(previewHeight);
     display: flex;
     justify-content: center;

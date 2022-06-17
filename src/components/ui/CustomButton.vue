@@ -13,9 +13,11 @@
   width: fit-content;
   height: fit-content;
   padding: 2.5px 10px;
+  border-radius: 2px;
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
   background-color: #333;
   margin-right: 5px;
   &-text {

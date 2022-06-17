@@ -44,6 +44,8 @@ const changeHandler = () => {
 
 <style scoped lang="scss">
 .input-wrap {
+  width: 60%;
+  margin-top: 10px;
   margin-right: 5px;
   display: flex;
   flex-direction: column;

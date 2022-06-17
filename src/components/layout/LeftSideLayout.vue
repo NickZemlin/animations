@@ -1,134 +1,141 @@
 <script setup lang="ts">
-	import { onMounted, ref } from 'vue';
-	import { animations } from '../../animationsList/animationsList';
-	import router from '../../router/router';
-	import { useAppStore } from '../../store/AppStore';
+import { onMounted, ref } from "vue";
+import { animations } from "../../animationsList/animationsList";
+import router from "../../router/router";
+import { useAppStore } from "../../store/AppStore";
+import PfmLogo from "../ui/PfmLogo.vue";
 
-	const emit = defineEmits(['leftResize', 'hover']);
+const emit = defineEmits(["leftResize", "hover"]);
 
-	const makeResizableDiv = (div: HTMLElement, resizer: HTMLElement) => {
-		const element = div;
-		const resizers = [resizer];
-		let original_width = 0;
-		const minWidth = 50;
-		const maxWidth = 500;
-		let original_x = element.getBoundingClientRect().left;
-		let original_mouse_x = 0;
-		resizer.addEventListener('mousedown', function (e) {
-			e.preventDefault();
-			original_width = parseFloat(
-				getComputedStyle(element, null)
-					.getPropertyValue('width')
-					.replace('px', '')
-			);
-			original_x = element.getBoundingClientRect().left;
-			original_mouse_x = e.pageX;
-			window.addEventListener('mousemove', resize);
-			window.addEventListener('mouseup', stopResize);
-		});
+const makeResizableDiv = (div: HTMLElement, resizer: HTMLElement) => {
+  const element = div;
+  const resizers = [resizer];
+  let original_width = 0;
+  const minWidth = 50;
+  const maxWidth = 500;
+  let original_x = element.getBoundingClientRect().left;
+  let original_mouse_x = 0;
+  resizer.addEventListener("mousedown", function (e) {
+    e.preventDefault();
+    original_width = parseFloat(
+      getComputedStyle(element, null)
+        .getPropertyValue("width")
+        .replace("px", "")
+    );
+    original_x = element.getBoundingClientRect().left;
+    original_mouse_x = e.pageX;
+    window.addEventListener("mousemove", resize);
+    window.addEventListener("mouseup", stopResize);
+  });
 
-		function resize(e: MouseEvent) {
-			const width = original_width + (e.pageX - original_mouse_x);
-			if (width < minWidth || width > maxWidth) return;
-			element.style.width = width + 'px';
-			localStorage.setItem('leftPanelWidth', width + 'px');
-			emit('leftResize', width);
-		}
+  function resize(e: MouseEvent) {
+    const width = original_width + (e.pageX - original_mouse_x);
+    if (width < minWidth || width > maxWidth) return;
+    element.style.width = width + "px";
+    localStorage.setItem("leftPanelWidth", width + "px");
+    emit("leftResize", width);
+  }
 
-		function stopResize() {
-			window.removeEventListener('mousemove', resize);
-		}
-	};
+  function stopResize() {
+    window.removeEventListener("mousemove", resize);
+  }
+};
 
-	const getLocalWidth = (el: HTMLElement) => {
-		const width = localStorage.getItem('leftPanelWidth');
-		if (typeof width === 'string') {
-			el.style.width = localStorage.getItem('leftPanelWidth')!;
-		}
-	};
+const getLocalWidth = (el: HTMLElement) => {
+  const width = localStorage.getItem("leftPanelWidth");
+  if (typeof width === "string") {
+    el.style.width = localStorage.getItem("leftPanelWidth")!;
+  }
+};
 
-	const leftSideWrap = ref<HTMLElement | null>(null);
-	const resizer = ref<HTMLElement | null>(null);
-	const hover = (value: boolean) => {
-		emit('hover', value);
-	};
+const leftSideWrap = ref<HTMLElement | null>(null);
+const resizer = ref<HTMLElement | null>(null);
+const hover = (value: boolean) => {
+  emit("hover", value);
+};
 
-	const navigateTo = (route: string) => {
-		router.push({ path: route });
-	};
-	onMounted(() => {
-		if (leftSideWrap.value && resizer.value) {
-			makeResizableDiv(leftSideWrap.value, resizer.value);
-			getLocalWidth(leftSideWrap.value);
-		}
-	});
+const navigateTo = (route: string) => {
+  router.push({ path: route });
+};
+onMounted(() => {
+  if (leftSideWrap.value && resizer.value) {
+    makeResizableDiv(leftSideWrap.value, resizer.value);
+    getLocalWidth(leftSideWrap.value);
+  }
+});
 </script>
 
 <template>
-	<div class="leftSide-wrap" ref="leftSideWrap">
-		<div
-			class="leftSide-resizeBar"
-			ref="resizer"
-			@mouseenter="hover(true)"
-			@mouseleave="hover(false)"
-		/>
-		<h3 class="leftSide-pfmHeader">PFM animations</h3>
-		<div class="leftSide-animationsList">
-			<div
-				class="leftSide-animationsList-animation"
-				v-for="animation in animations"
-				@click="navigateTo(animation.route)"
-			>
-				<h5>{{ animation.name }}</h5>
-			</div>
-		</div>
-	</div>
+  <div class="leftSide-wrap" ref="leftSideWrap">
+    <div
+      class="leftSide-resizeBar"
+      ref="resizer"
+      @mouseenter="hover(true)"
+      @mouseleave="hover(false)"
+    />
+    <div class="leftSide-pfmHeader">
+      <h3>PFM animations</h3>
+      <PfmLogo style="margin-left: 10px" />
+    </div>
+    <div class="leftSide-animationsList">
+      <div
+        class="leftSide-animationsList-animation"
+        v-for="animation in animations"
+        @click="navigateTo(animation.route)"
+      >
+        <h5>{{ animation.name }}</h5>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
-	.leftSide {
-		&-wrap {
-			height: 100%;
-			width: 300px;
-			min-width: 50px;
-			max-width: 500px;
-			background-color: rgb(250, 249, 244);
-			position: relative;
-			overflow: hidden;
-			padding-left: 10px;
-			* {
-				white-space: nowrap;
-			}
-		}
-		&-resizeBar {
-			box-sizing: content-box;
-			width: 10px;
-			position: absolute;
-			right: -5px;
-			height: 100%;
-			cursor: col-resize;
-			display: flex;
-			flex-direction: column;
-		}
-		&-pfmHeader {
-			margin-top: 20px;
-		}
-		&-animationsList {
-			display: flex;
-			flex-direction: column;
-			flex-wrap: nowrap;
-			margin-top: 20px;
-			&-animation {
-				margin-bottom: 10px;
-				cursor: pointer;
-				position: relative;
-				border-left: 0px solid #333;
-				transition: border 0.1s ease-out;
-				will-change: border;
-				&:hover {
-					border-left: 10px solid #333;
-				}
-			}
-		}
-	}
+.leftSide {
+  &-wrap {
+    height: 100%;
+    width: 300px;
+    min-width: 50px;
+    max-width: 500px;
+    background-color: rgb(250, 249, 244);
+    position: relative;
+    overflow: hidden;
+    padding-left: 10px;
+    * {
+      white-space: nowrap;
+    }
+  }
+  &-resizeBar {
+    box-sizing: content-box;
+    width: 10px;
+    position: absolute;
+    right: -5px;
+    height: 100%;
+    cursor: col-resize;
+    display: flex;
+    flex-direction: column;
+  }
+  &-pfmHeader {
+    margin-top: 20px;
+    display: flex;
+    // justify-content: center;
+    align-items: center;
+  }
+  &-animationsList {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    margin-top: 20px;
+    &-animation {
+      margin-bottom: 10px;
+      cursor: pointer;
+      position: relative;
+      border-left: 0px solid #333;
+      transition: border 0.1s ease-out;
+      will-change: border;
+      &:hover {
+        border-left: 10px solid #333;
+      }
+    }
+  }
+}
 </style>
