@@ -8,8 +8,8 @@ interface Settings {
   duration: number;
   easingEnter?: string;
   easingLeave?: string;
-  opacityClosed?: number;
-  opacityOpened?: number;
+  opacityClosed: number;
+  opacityOpened: number;
   appear?: boolean;
 }
 
@@ -18,7 +18,7 @@ const settings = ref<Settings>({
   easingEnter: "ease-in-out",
   easingLeave: "ease-in-out",
   opacityClosed: 0,
-  opacityOpened: 1,
+  opacityOpened: 100,
   appear: false,
 });
 
@@ -90,7 +90,7 @@ function getEnterKeyframes(height: string, initialStyle: initialStyle) {
   return [
     {
       height: closed,
-      opacity: settings.value.opacityClosed,
+      opacity: settings.value.opacityClosed / 100,
       paddingTop: closed,
       paddingBottom: closed,
       borderTopWidth: closed,
@@ -100,7 +100,7 @@ function getEnterKeyframes(height: string, initialStyle: initialStyle) {
     },
     {
       height,
-      opacity: settings.value.opacityOpened,
+      opacity: settings.value.opacityOpened / 100,
       paddingTop: initialStyle.paddingTop,
       paddingBottom: initialStyle.paddingBottom,
       borderTopWidth: initialStyle.borderTopWidth,
@@ -146,6 +146,8 @@ const toggleAnimation = () => {
 <template>
   <ControlPanel>
     <CustomButton @click="toggleAnimation">play</CustomButton>
+  </ControlPanel>
+  <teleport to="#Settings">
     <CustomSlider
       v-model="settings.duration"
       :value="settings.duration"
@@ -154,7 +156,23 @@ const toggleAnimation = () => {
       :default="settings.duration"
       :min="100"
     />
-  </ControlPanel>
+    <CustomSlider
+      v-model="settings.opacityOpened"
+      :value="settings.opacityOpened"
+      :max="100"
+      name="Opacity Opened"
+      :default="settings.opacityOpened"
+      :min="0"
+    />
+    <CustomSlider
+      v-model="settings.opacityClosed"
+      :value="settings.opacityClosed"
+      :max="100"
+      name="Opacity Closed"
+      :default="settings.opacityClosed"
+      :min="0"
+    />
+  </teleport>
   <Transition
     :css="false"
     @enter="enterTransition"
