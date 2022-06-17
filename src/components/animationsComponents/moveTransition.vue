@@ -10,21 +10,133 @@ import { useRoute } from "vue-router";
 import CustomSlider from "../ui/CustomSlider.vue";
 import { timingFunctions } from "../../animationsList/animationsList";
 
-const show = ref(true);
+interface Settings {
+  enterDuration: number;
+  exitDuration: number;
+  easingEnter: string;
+  easingLeave: string;
+  xAxis: number;
+  yAxis: number;
+}
+
+const settings = ref<Settings>({
+  enterDuration: 30,
+  exitDuration: 30,
+  easingEnter: "ease",
+  easingLeave: "ease",
+  xAxis: 10,
+  yAxis: 0,
+});
+
+const transitionEnter = computed(() => {
+  return `all ${settings.value.enterDuration / 100}s ${
+    settings.value.easingEnter
+  }`;
+});
+const transitionExit = computed(() => {
+  return `all ${settings.value.exitDuration / 100}s ${
+    settings.value.easingLeave
+  }`;
+});
+const translate = computed(() => {
+  return `translateX(${settings.value.xAxis}px) translateY(${settings.value.yAxis}px)`;
+});
+
 const route = useRoute();
 const description = computed(() => {
   return route.meta.description as string;
 });
+
+const updateTimingFunction = (value: string, intent: "in" | "out") => {
+  switch (intent) {
+    case "in":
+      settings.value.easingEnter = value;
+      break;
+    case "out":
+      settings.value.easingLeave = value;
+      break;
+  }
+};
+
+const show = ref(true);
+const toggleAnimation = () => {
+  show.value = !show.value;
+};
 </script>
 
 <template>
   <ControlPanel>
-    <CustomButton @click="">play</CustomButton>
+    <CustomButton @click="toggleAnimation">play</CustomButton>
   </ControlPanel>
-  <teleport to="#Settings"></teleport>
-  <transition name="opacity">
+  <teleport to="#Settings">
+    <CustomDescription :text="description" />
+    <CustomSlider
+      v-model="settings.enterDuration"
+      :value="settings.enterDuration"
+      :max="100"
+      name="enter duration"
+      :default="settings.enterDuration"
+      :min="0"
+    />
+    <CustomSlider
+      v-model="settings.exitDuration"
+      :value="settings.exitDuration"
+      :max="100"
+      name="exit duration"
+      :default="settings.exitDuration"
+      :min="0"
+    />
+    <CustomSlider
+      v-model="settings.xAxis"
+      :value="settings.xAxis"
+      :max="50"
+      name="X axis length"
+      :default="settings.xAxis"
+      :min="-50"
+    />
+    <CustomSlider
+      v-model="settings.yAxis"
+      :value="settings.yAxis"
+      :max="50"
+      name="Y axis length"
+      :default="settings.yAxis"
+      :min="-50"
+    />
+    <CustomRadio
+      :selection="timingFunctions"
+      header="Timing Function In"
+      @update="updateTimingFunction($event, 'in')"
+    />
+    <CustomRadio
+      :selection="timingFunctions"
+      header="Timing Function out"
+      @update="updateTimingFunction($event, 'out')"
+    />
+  </teleport>
+  <transition name="move">
     <ExampleText v-if="show" />
   </transition>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.move-enter-from {
+  transform: v-bind(translate);
+  opacity: 0;
+}
+.move-enter-to {
+  transform: translateX(0) translateY(0);
+}
+.move-enter-active {
+  transition: v-bind(transitionEnter);
+}
+.move-leave-from {
+  transform: translateX(0) translateY(0);
+}
+.move-leave-to {
+  transform: v-bind(translate);
+  opacity: 0;
+}
+.move-leave-active {
+  transition: v-bind(transitionExit);
+}
+</style>

@@ -13,7 +13,7 @@ export const animations = [
   {
     name: "Move transition",
     route: "moveTransition",
-    description: "<p>Стандартная анимация появления</p>",
+    description: "<p>Стандартная анимация появления с перемещением</p>",
   },
 ];
 
@@ -42,5 +42,21 @@ export const timingFunctions: TimingFunction[] = [
   {
     name: "ease-in-out-back",
     function: "cubic-bezier(0.68, -0.6, 0.32, 1.6)",
+  },
+];
+
+export interface MoveDirection {
+  name: string;
+  css: string;
+}
+
+export const moveDirection: MoveDirection[] = [
+  {
+    name: "xAxis",
+    css: "translateX",
+  },
+  {
+    name: "yAxis",
+    css: "translateY",
   },
 ];

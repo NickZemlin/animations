@@ -26,10 +26,10 @@ const handleClick = (input: string) => {
         class="radio-item"
         v-for="item in selection"
         :class="{ activeBg: selectedButton === item.function }"
+        @click="handleClick(item.function)"
       >
         <h4
           class="radio-item-text"
-          @click="handleClick(item.function)"
           :class="{ activeText: selectedButton === item.function }"
         >
           {{ item.name }}
