@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue';
+	import { animations } from '../../animationsList/animationsList';
 
 	const emit = defineEmits(['leftResize', 'hover']);
 
@@ -66,6 +67,14 @@
 			@mouseleave="hover(false)"
 		/>
 		<h3 class="leftSide-pfmHeader">PFM animations</h3>
+		<div class="leftSide-animationsList">
+			<div
+				class="leftSide-animationsList-animation"
+				v-for="animation in animations"
+			>
+				<h4>{{ animation.name }}</h4>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -79,6 +88,7 @@
 			background-color: rgb(250, 249, 244);
 			position: relative;
 			overflow: hidden;
+			padding-left: 10px;
 			* {
 				white-space: nowrap;
 			}
@@ -95,9 +105,23 @@
 		}
 		&-pfmHeader {
 			margin-top: 20px;
-			margin-left: 5px;
-			// width: 100%;
-			// text-align: center;
+		}
+		&-animationsList {
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			margin-top: 20px;
+			&-animation {
+				margin-bottom: 10px;
+				cursor: pointer;
+				position: relative;
+				border-left: 0px solid #333;
+				transition: border 0.1s ease-out;
+				will-change: border;
+				&:hover {
+					border-left: 10px solid #333;
+				}
+			}
 		}
 	}
 </style>
