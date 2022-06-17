@@ -1,10 +1,10 @@
 export const animations = [
-	{
-		name: 'collapseTransition',
-		route: 'collapseTransition',
-	},
-	// {
-	// 	name: 'standartTransition',
-	// 	route: 'standartTransition',
-	// },
+  {
+    name: "collapseTransition",
+    route: "collapseTransition",
+  },
+  {
+    name: "standartTransition",
+    route: "standartTransition",
+  },
 ];
