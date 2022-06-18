@@ -21,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
     width: 100%;
     overflow: hidden;
     height: v-bind(previewHeight);
+    background-color: #e5e5e5;
     display: flex;
     justify-content: center;
     padding-top: 100px;
