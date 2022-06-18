@@ -81,6 +81,9 @@ onMounted(() => {
       background-color: #333333;
       border-radius: 10px;
     }
+    &::-webkit-scrollbar-track {
+      margin: 10px;
+    }
   }
   &-resizer {
     position: sticky;

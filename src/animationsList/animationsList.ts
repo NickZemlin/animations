@@ -15,6 +15,21 @@ export const animations = [
     route: "moveTransition",
     description: "<p>Стандартная анимация появления с перемещением</p>",
   },
+  {
+    name: "Default text transition",
+    route: "defaultTextTransition",
+    description: "<p>Стандартная анимация замены текста</p>",
+  },
+  {
+    name: "Move text transition",
+    route: "moveTextTransition",
+    description: "<p>Стандартная анимация замены текста c перемещением</p>",
+  },
+  {
+    name: "Rotary text transition",
+    route: "rotaryTextTransition",
+    description: "<p>Стандартная анимация замены текста</p>",
+  },
 ];
 
 export interface TimingFunction {
