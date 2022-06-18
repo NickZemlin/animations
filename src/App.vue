@@ -47,6 +47,10 @@ const hover = ref(false);
   box-sizing: border-box;
   user-select: none;
 }
+a {
+  color: inherit;
+  text-decoration: none;
+}
 .app-wrap {
   width: 100vw;
   height: 100vh;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import { animations } from "../../animationsList/animationsList";
 import router from "../../router/router";
 import { useAppStore } from "../../store/AppStore";
@@ -48,6 +49,8 @@ const getLocalWidth = (el: HTMLElement) => {
   }
 };
 
+const route = useRoute();
+
 const leftSideWrap = ref<HTMLElement | null>(null);
 const resizer = ref<HTMLElement | null>(null);
 const hover = (value: boolean) => {
@@ -57,6 +60,7 @@ const hover = (value: boolean) => {
 const navigateTo = (route: string) => {
   router.push({ path: route });
 };
+
 onMounted(() => {
   if (leftSideWrap.value && resizer.value) {
     makeResizableDiv(leftSideWrap.value, resizer.value);
@@ -73,15 +77,18 @@ onMounted(() => {
       @mouseenter="hover(true)"
       @mouseleave="hover(false)"
     />
-    <div class="leftSide-pfmHeader">
-      <h3>PFM animations</h3>
-      <PfmLogo style="margin-left: 10px" />
-    </div>
+    <a href="https://planetfor.me" target="_blank">
+      <div class="leftSide-pfmHeader">
+        <h3>PFM animations</h3>
+        <PfmLogo style="margin-left: 10px" />
+      </div>
+    </a>
     <div class="leftSide-animationsList">
       <div
         class="leftSide-animationsList-animation"
         v-for="animation in animations"
         @click="navigateTo(animation.route)"
+        :class="{ active: route.name === animation.route }"
       >
         <h5>{{ animation.name }}</h5>
       </div>
@@ -90,13 +97,17 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.active {
+  border-left: 10px solid #333 !important;
+  padding-left: 5px;
+}
 .leftSide {
   &-wrap {
     height: 100%;
     width: 300px;
     min-width: 50px;
     max-width: 500px;
-    background-color: rgb(250, 249, 244);
+    background-color: #f2f3f5;
     position: relative;
     overflow: hidden;
     padding-left: 10px;
@@ -117,7 +128,6 @@ onMounted(() => {
   &-pfmHeader {
     margin-top: 20px;
     display: flex;
-    // justify-content: center;
     align-items: center;
   }
   &-animationsList {
@@ -130,7 +140,7 @@ onMounted(() => {
       cursor: pointer;
       position: relative;
       border-left: 0px solid #333;
-      transition: border 0.1s ease-out;
+      transition: all 0.1s ease-out;
       will-change: border;
       &:hover {
         border-left: 10px solid #333;

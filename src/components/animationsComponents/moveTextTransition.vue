@@ -80,7 +80,6 @@ const description = computed(() => {
 <template>
   <ControlPanel>
     <CustomButton @click="toggleAnimation">play</CustomButton>
-    {{ enterTransfrom }}
   </ControlPanel>
   <teleport to="#Settings">
     <CustomDescription :text="description" />

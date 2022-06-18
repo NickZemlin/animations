@@ -45,7 +45,7 @@ const heightGetter = computed(() => {
   &-wrap {
     height: 100%;
     overflow: hidden;
-    background-color: rgb(255, 250, 242);
+    background-color: white;
     box-shadow: -0.5px 0px 3.6px rgba(0, 0, 0, 0.01),
       -1.3px 0px 10px rgba(0, 0, 0, 0.007), -3px 0px 24.1px rgba(0, 0, 0, 0.005),
       -10px 0px 80px rgba(0, 0, 0, 0.003);
