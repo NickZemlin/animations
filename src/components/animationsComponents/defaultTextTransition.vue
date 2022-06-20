@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import CustomButton from "../ui/CustomButton.vue";
 import CustomRadio from "../ui/CustomRadio.vue";
 import ControlPanel from "../ui/ControlPanel.vue";
@@ -8,6 +8,7 @@ import { computed } from "vue";
 import { useRoute } from "vue-router";
 import CustomSlider from "../ui/CustomSlider.vue";
 import { timingFunctions } from "../../animationsList/animationsList";
+import { useAppStore } from "../../store/AppStore";
 
 interface Settings {
   enterDuration: number;
@@ -24,6 +25,17 @@ const settings = ref<Settings>({
   easingEnter: "ease",
   easingLeave: "ease",
 });
+
+const appStore = useAppStore();
+onBeforeMount(() => {
+  appStore.updateSettings(settings.value);
+});
+watch(
+  () => settings.value,
+  () => {
+    appStore.updateSettings(settings.value);
+  }
+);
 
 const enterTransition = computed(() => {
   let transition = `all ${settings.value.enterDuration / 100}s ${

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import CustomButton from "../ui/CustomButton.vue";
 import ControlPanel from "../ui/ControlPanel.vue";
 import CustomSlider from "../ui/CustomSlider.vue";
@@ -9,6 +9,7 @@ import { timingFunctions } from "../../animationsList/animationsList";
 import LongListExample from "../testExamples/longListExample.vue";
 import { computed } from "@vue/reactivity";
 import { useRoute } from "vue-router";
+import { useAppStore } from "../../store/AppStore";
 
 interface Settings {
   duration: number;
@@ -29,6 +30,17 @@ const settings = ref<Settings>({
   opacityOpened: 100,
   appear: false,
 });
+
+const appStore = useAppStore();
+onBeforeMount(() => {
+  appStore.updateSettings(settings.value);
+});
+watch(
+  () => settings.value,
+  () => {
+    appStore.updateSettings(settings.value);
+  }
+);
 
 const closed = "0px";
 

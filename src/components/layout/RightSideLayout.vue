@@ -3,6 +3,7 @@ import SettingsPanel from "../settingsPanel/SettingsPanel.vue";
 import PreviewPanel from "../preview/PreviewPanel.vue";
 import { ref } from "vue";
 import { computed } from "@vue/reactivity";
+import ExportPanel from "../ui/exportPanel.vue";
 interface Props {
   rightSideWidth: string;
   hover: boolean;
@@ -38,6 +39,7 @@ const heightGetter = computed(() => {
     <PreviewPanel :preview-height="heightGetter" />
     <SettingsPanel @settings-resize="resizeHandle" />
   </div>
+  <ExportPanel />
 </template>
 
 <style scoped lang="scss">
