@@ -31,6 +31,11 @@ export const animations = [
     description:
       "роторная анимация замены текста.</p><ul><li>в некоторых лэй-аутах анимация просто не сработает, нужно обсуждать от кейса к кейсу</li><li>расстояния от центра ротации считается по формуле (360/number of sides)</li><li>глубина влияет на расстояние от центра ротации до текста<br /></li</ul>",
   },
+    {
+    name: "List move transition",
+    route: "listMoveTransition",
+    description:"eeeee",
+  },
 ];
 
 export interface TimingFunction {

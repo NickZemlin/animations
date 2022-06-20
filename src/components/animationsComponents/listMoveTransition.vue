@@ -1,0 +1,222 @@
+<script setup lang="ts">
+import { ref, render } from "vue";
+import CustomButton from "../ui/CustomButton.vue";
+import CustomRadio from "../ui/CustomRadio.vue";
+import ControlPanel from "../ui/ControlPanel.vue";
+import CustomDescription from "../ui/CustomDescription.vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import CustomSlider from "../ui/CustomSlider.vue";
+import { timingFunctions } from "../../animationsList/animationsList";
+
+
+
+
+
+
+const description = computed(() => {
+  return route.meta.description as string;
+});
+
+const route = useRoute();
+
+const show = ref(true);
+const toggleAnimation = () => {
+  show.value = !show.value;
+};
+
+const shuffleArray = (input: exampleItem[]) => {
+  let currentIndex = input.length,  randomIndex;
+  while (currentIndex != 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+    [input[currentIndex], input[randomIndex]] = [
+      input[randomIndex], input[currentIndex]];
+  }
+
+}
+
+const sortDescending = (input: exampleItem[]) =>{
+    // input.sort((a , b)=>a.displayNum - b.displayNum)
+    return (input.sort((a , b)=>a.displayNum - b.displayNum))
+}
+
+class exampleArray extends Array {
+    public array!: exampleItem[]
+    public customSort(){
+        return sortDescending(this.array)
+    }
+    public shuffle(){
+        shuffleArray(this.array)
+    }
+    public addNew(){
+        if (this.array.length){
+            const temp = [...this.array]
+        this.array.push(new exampleItem(temp[temp.length - 1].displayNum +1))
+
+        }else {
+            this.array.push(new exampleItem(1))
+        }
+    }
+    public removeLast(){
+        this.array.pop()
+    }
+    constructor(amount: number){
+        super()
+        this.array = generateExample(amount)
+    }
+}
+
+class exampleItem {
+    public displayNum!: number
+    public key!: number
+
+    constructor(display: number){
+        this.displayNum = display
+        this.key = display
+    }
+}
+
+const generateExample = (amount: number) =>{
+    const output = []
+    for (let i = 1; i < amount + 1; i++){
+        output.push(new exampleItem(i))
+    }
+    return output
+}
+
+const renderArray = ref(new exampleArray(10))
+
+
+interface Settings {
+  enterDuration: number;
+  exitDuration: number;
+  moveDuration: number
+  delay: number;
+  easingEnter: string;
+  easingLeave: string;
+}
+
+const settings = ref<Settings>({
+  enterDuration: 30,
+  exitDuration: 30,
+  moveDuration: 30,
+  delay: 30,
+  easingEnter: "ease",
+  easingLeave: "ease", 
+});
+
+const updateTimingFunction = (value: string, intent: "in" | "out") => {
+  switch (intent) {
+    case "in":
+      settings.value.easingEnter = value;
+      break;
+    case "out":
+      settings.value.easingLeave = value;
+      break;
+  }
+};
+
+
+</script>
+
+<template>
+<ControlPanel>
+    <CustomButton @click="toggleAnimation">play</CustomButton>
+    <CustomButton @click="renderArray.shuffle()">shuffle</CustomButton>
+    <CustomButton @click="renderArray.customSort()">sort</CustomButton>
+    <CustomButton @click="renderArray.addNew()">add new</CustomButton>
+    <CustomButton @click="renderArray.removeLast()">remove last</CustomButton>
+    {{settings}}
+  </ControlPanel>
+   <teleport to="#Settings">
+    <CustomDescription :text="description" />
+        <CustomSlider
+      v-model="settings.enterDuration"
+      :value="settings.enterDuration"
+      :max="100"
+      name="enter duration"
+      :default="settings.enterDuration"
+      :min="0"
+    />
+    <CustomSlider
+      v-model="settings.exitDuration"
+      :value="settings.exitDuration"
+      :max="100"
+      name="exit duration"
+      :default="settings.exitDuration"
+      :min="0"
+    />
+    <CustomSlider
+      v-model="settings.moveDuration"
+      :value="settings.moveDuration"
+      :max="100"
+      name="exit duration"
+      :default="settings.moveDuration"
+      :min="0"
+    />
+    <CustomSlider
+      v-model="settings.delay"
+      :value="settings.delay"
+      :max="100"
+      name="delay"
+      :default="settings.delay"
+      :min="0"
+    />
+    <CustomRadio
+      :selection="timingFunctions"
+      header="Timing Function In"
+      @update="updateTimingFunction($event, 'in')"
+    />
+    <CustomRadio
+      :selection="timingFunctions"
+      header="Timing Function out"
+      @update="updateTimingFunction($event, 'out')"
+    />
+    </teleport>
+        <transition-group name="list" tag="div" class="example-wrap">
+        <div class="example" v-for="li in renderArray.array" :key="li.key" >
+        {{li.displayNum}}
+        </div>
+        </transition-group>
+</template>
+
+
+<style scoped lang="scss">
+
+.example{
+    &-wrap{
+        display: flex;
+        flex-direction: row;
+        align-content: flex-start;
+    }
+    width: 50px;
+    height: 50px;
+    margin-right: 5px;
+    margin-top: 5px;
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.list-move, /* apply transition to moving elements */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+
+}
+
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.list-leave-active {
+  position: absolute;
+}
+
+</style>

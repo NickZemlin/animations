@@ -4,7 +4,6 @@ import CustomButton from "../ui/CustomButton.vue";
 import CustomRadio from "../ui/CustomRadio.vue";
 import ControlPanel from "../ui/ControlPanel.vue";
 import CustomDescription from "../ui/CustomDescription.vue";
-import ExampleText from "../testExamples/exampleText.vue";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import CustomSlider from "../ui/CustomSlider.vue";
@@ -40,9 +39,6 @@ const leaveTransition = computed(() => {
   let transition = `all ${settings.value.exitDuration / 100}s ${
     settings.value.easingLeave
   }`;
-  // if (settings.value.delay) {
-  //   transition = transition + ` ${settings.value.delay}s`;
-  // }
   return transition;
 });
 
