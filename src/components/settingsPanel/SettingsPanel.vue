@@ -73,7 +73,7 @@ onMounted(() => {
       0px -2.2px 17.9px rgba(0, 0, 0, 0.005),
       0px -4.2px 33.4px rgba(0, 0, 0, 0.004),
       0px -10px 80px rgba(0, 0, 0, 0.003);
-    overflow-y: overlay;
+      overflow-y: auto;
     &::-webkit-scrollbar {
       width: 5px;
     }

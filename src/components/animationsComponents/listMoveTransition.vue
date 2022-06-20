@@ -90,23 +90,27 @@ const renderArray = ref(new exampleArray(10))
 
 interface Settings {
   enterDuration: number;
+  enterDelay: number;
   exitDuration: number;
   moveDuration: number
-  delay: number;
+  moveDelay: number;
   easingEnter: string;
   easingLeave: string;
+  easingMove: string
 }
 
 const settings = ref<Settings>({
   enterDuration: 30,
+  enterDelay: 45,
   exitDuration: 30,
-  moveDuration: 30,
-  delay: 30,
+  moveDuration: 75,
+  moveDelay: 0,
   easingEnter: "ease",
   easingLeave: "ease", 
+  easingMove: "ease"
 });
 
-const updateTimingFunction = (value: string, intent: "in" | "out") => {
+const updateTimingFunction = (value: string, intent: "in" | "out" | "move") => {
   switch (intent) {
     case "in":
       settings.value.easingEnter = value;
@@ -114,8 +118,22 @@ const updateTimingFunction = (value: string, intent: "in" | "out") => {
     case "out":
       settings.value.easingLeave = value;
       break;
+    case "move":
+        settings.value.easingMove = value
   }
 };
+
+const enterTiming = computed(()=>{
+    return `all ${settings.value.enterDuration / 100}s ${settings.value.easingEnter} ${settings.value.enterDelay/100}s`
+})
+
+const exitTiming = computed(()=>{
+    return `all ${settings.value.exitDuration / 100}s ${settings.value.easingLeave}`
+})
+
+const moveTiming = computed(()=>{
+    return `all ${settings.value.moveDuration/100}s ${settings.value.easingMove} ${settings.value.moveDelay/100}s`
+})
 
 
 </script>
@@ -127,7 +145,6 @@ const updateTimingFunction = (value: string, intent: "in" | "out") => {
     <CustomButton @click="renderArray.customSort()">sort</CustomButton>
     <CustomButton @click="renderArray.addNew()">add new</CustomButton>
     <CustomButton @click="renderArray.removeLast()">remove last</CustomButton>
-    {{settings}}
   </ControlPanel>
    <teleport to="#Settings">
     <CustomDescription :text="description" />
@@ -137,6 +154,14 @@ const updateTimingFunction = (value: string, intent: "in" | "out") => {
       :max="100"
       name="enter duration"
       :default="settings.enterDuration"
+      :min="0"
+    />
+    <CustomSlider
+      v-model="settings.enterDelay"
+      :value="settings.enterDelay"
+      :max="100"
+      name="Enter delay"
+      :default="settings.enterDelay"
       :min="0"
     />
     <CustomSlider
@@ -151,16 +176,16 @@ const updateTimingFunction = (value: string, intent: "in" | "out") => {
       v-model="settings.moveDuration"
       :value="settings.moveDuration"
       :max="100"
-      name="exit duration"
+      name="Move duration"
       :default="settings.moveDuration"
       :min="0"
     />
-    <CustomSlider
-      v-model="settings.delay"
-      :value="settings.delay"
+        <CustomSlider
+      v-model="settings.moveDelay"
+      :value="settings.moveDelay"
       :max="100"
-      name="delay"
-      :default="settings.delay"
+      name="Move delay"
+      :default="settings.moveDelay"
       :min="0"
     />
     <CustomRadio
@@ -172,6 +197,11 @@ const updateTimingFunction = (value: string, intent: "in" | "out") => {
       :selection="timingFunctions"
       header="Timing Function out"
       @update="updateTimingFunction($event, 'out')"
+    />
+        <CustomRadio
+      :selection="timingFunctions"
+      header="Timing Function move"
+      @update="updateTimingFunction($event, 'move')"
     />
     </teleport>
         <transition-group name="list" tag="div" class="example-wrap">
@@ -199,24 +229,30 @@ const updateTimingFunction = (value: string, intent: "in" | "out") => {
     justify-content: center;
     align-items: center;
     color: white;
+    will-change: transition;
 }
 
-.list-move, /* apply transition to moving elements */
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.5s ease;
+.list-enter-from{
+    opacity: 0;
 }
-.list-enter-from,
-.list-leave-to {
-  opacity: 0;
-
+.list-enter-to{
+    opacity: 1;
+}
+.list-enter-active{
+    transition: v-bind(enterTiming);
 }
 
+.list-leave-to{
+    opacity: 0;
+    transform: translateX(-50px);
+}
+.list-leave-active{
+    transition: v-bind(exitTiming);
+    position: absolute;
+}
 
-/* ensure leaving items are taken out of layout flow so that moving
-   animations can be calculated correctly. */
-.list-leave-active {
-  position: absolute;
+.list-move{
+   transition: v-bind(moveTiming);
 }
 
 </style>

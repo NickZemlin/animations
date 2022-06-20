@@ -34,7 +34,7 @@ export const animations = [
     {
     name: "List move transition",
     route: "listMoveTransition",
-    description:"eeeee",
+    description:"<p>Анимация движения в списке</p><ul><li>при анимации проподания элемента, он в любом случае будет двигаться в начало списка</li><li>Нормально работает только если список в одну колонку</li><li>Работает как по вертикальным спискам, так и по горизонтальым</li></ul>",
   },
 ];
 
