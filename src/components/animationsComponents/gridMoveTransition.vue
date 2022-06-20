@@ -85,7 +85,7 @@ const generateExample = (amount: number) =>{
     return output
 }
 
-const renderArray = ref(new exampleArray(10))
+const renderArray = ref(new exampleArray(12))
 
 
 interface Settings {
@@ -218,7 +218,9 @@ const moveTiming = computed(()=>{
     &-wrap{
         display: flex;
         flex-direction: row;
+        width: calc(50px * 4);
         align-content: flex-start;
+        flex-wrap: wrap;
     }
     width: 50px;
     height: 50px;
@@ -244,7 +246,7 @@ const moveTiming = computed(()=>{
 
 .list-leave-to{
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translateX(-500px);
 }
 .list-leave-active{
     transition: v-bind(exitTiming);
