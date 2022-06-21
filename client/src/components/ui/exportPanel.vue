@@ -83,10 +83,10 @@ const animationName = computed(() => {
 .export {
   &-wrap {
     user-select: text;
-    position: fixed;
+    position: absolute;
     top: 15vh;
-    right: 0;
-    z-index: 2;
+    right: 20px;
+    z-index: 10;
     display: flex;
     flex-wrap: nowrap;
     align-items: flex-start;
@@ -110,7 +110,7 @@ const animationName = computed(() => {
       padding: 10px 0px;
       padding-left: 10px;
       background-color: #f2f3f5;
-      border-radius: 0px 0px 0px 10px;
+      border-radius: 0px 10px 10px 10px;
       overflow: hidden;
       white-space: nowrap;
     }

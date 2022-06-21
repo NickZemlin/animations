@@ -1,0 +1,18 @@
+version: '3.7'
+
+networks:
+  web-client-network:
+    external: true
+
+services:
+  web-animations-nginx:
+    container_name: web-animations-nginx
+    image: ${WEB_ANIMATIONS_IMAGE}
+    stdin_open: true
+    restart: unless-stopped
+    tty: true
+    networks:
+      - web-client-network
+    expose:
+      - 80
+

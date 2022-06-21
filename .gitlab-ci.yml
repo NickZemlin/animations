@@ -1,0 +1,101 @@
+variables:
+  APP_NAME: "web-animations-client"
+  PROJECT_ROOT_PATH: "${ROOT_APPS_PATH}/${APP_NAME}"
+
+stages:
+  - build
+  - deploy
+  - notify
+
+notify_error:
+  stage: notify
+  image: cr.yandex/${YC_REGISTRY_ID}/telegram-msg-sender:latest
+  tags:
+    - telegram-sender
+  variables:
+    BRANCH: $CI_COMMIT_REF_SLUG
+    TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
+    TELEGRAM_CHANNEL_ID: $TELEGRAM_CHANNEL_ID
+    MESSAGE: |
+      Merge status: ❌
+      👤 : $GITLAB_USER_LOGIN
+      🛠 : $CI_PROJECT_NAME
+      📝 : $CI_COMMIT_TITLE
+      🪧 : [Commit]($CI_PROJECT_URL/commit/$CI_COMMIT_SHA/)
+  script:
+    - executeSend
+  when: on_failure
+
+.notify_success:
+  stage: notify
+  image: cr.yandex/${YC_REGISTRY_ID}/telegram-msg-sender:latest
+  tags:
+    - telegram-sender
+  variables:
+    BRANCH: $CI_COMMIT_REF_SLUG
+    TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
+    TELEGRAM_CHANNEL_ID: $TELEGRAM_CHANNEL_ID
+    MESSAGE: |
+      👤 : $GITLAB_USER_LOGIN
+      🛠 : $CI_PROJECT_NAME
+      💻 : $URL
+      📝 : $CI_COMMIT_TITLE
+      🪧 : [Commit]($CI_PROJECT_URL/commit/$CI_COMMIT_SHA/)
+      $END_MESSAGE
+  script:
+    - executeSend
+
+.build:
+  stage: build
+  tags:
+    - shell-builder-vm
+  script:
+    # Build containers
+    - docker build -t cr.yandex/${YC_REGISTRY_ID}/${APP_NAME}-$SEGMENT:$CI_PIPELINE_IID -f docker/nginx/Dockerfile --target server .
+    - docker push cr.yandex/${YC_REGISTRY_ID}/${APP_NAME}-$SEGMENT:$CI_PIPELINE_IID
+
+.deploy:
+  stage: deploy
+  script:
+    # Pull new docker image
+    - docker pull cr.yandex/${YC_REGISTRY_ID}/${APP_NAME}-$SEGMENT:$CI_PIPELINE_IID
+    - mkdir -p $PROJECT_ROOT_PATH
+    # Project folder
+    - cd $PROJECT_ROOT_PATH
+    - make down || true
+    # Gitlab build folder
+    - cd $CI_PROJECT_DIR
+    - rm -rf $PROJECT_ROOT_PATH/* && rm -f $PROJECT_ROOT_PATH/.env
+    - mv Makefile docker-compose.server.yml $PROJECT_ROOT_PATH
+    # Project folder
+    - cd $PROJECT_ROOT_PATH
+    - echo WEB_ANIMATIONS_IMAGE=cr.yandex/${YC_REGISTRY_ID}/${APP_NAME}-$SEGMENT:$CI_PIPELINE_IID >> .env
+    - make rebuild
+    # Removing old images
+    - docker image prune -a -f
+
+# Dev segment
+
+build_dev:
+  extends: .build
+  only:
+    - dev
+  variables:
+    SEGMENT: dev
+
+deploy_dev:
+  extends: .deploy
+  tags:
+    - shell-dev-vm
+  only:
+    - dev
+  variables:
+    SEGMENT: dev
+
+notify_dev:
+  extends: .notify_success
+  only:
+    - dev
+  variables:
+    URL: $DEV_URL
+    END_MESSAGE: ''

@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  web-animations-nginx:
+    container_name: web-animations-nginx
+    stdin_open: true
+    tty: true
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+      target: local
+    ports:
+      - "8080:80"
+    volumes:
+      - ./client:/var/www
+
