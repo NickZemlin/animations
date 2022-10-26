@@ -1,14 +1,6 @@
-# Web-client
-#### При разработке данного проекта следует придерживаться следующих [соглашений](https://wiki.pfm.team/en/pfm-conventions/web-ui)
-
-
-#### Поднять проект локально:
-```bash
-make up-local
-cd client && yarn prepare
-```
-
-#### Storybook:
-```bash
-make up-storybook
-```
+# Transition & transition group showcase
+## Built with Vue3 + Script Setup + TS
+### to run the project:
+| Docker | Locally |
+|--|--|
+| `client % rebuild-local` | `Yarn run dev` |

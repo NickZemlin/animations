@@ -4,7 +4,6 @@ import { useRoute } from "vue-router";
 import { animations } from "../../animationsList/animationsList";
 import router from "../../router/router";
 import { useAppStore } from "../../store/AppStore";
-import PfmLogo from "../ui/PfmLogo.vue";
 
 const emit = defineEmits(["leftResize", "hover"]);
 
@@ -79,8 +78,7 @@ onMounted(() => {
     />
     <a href="https://planetfor.me" target="_blank">
       <div class="leftSide-pfmHeader">
-        <h3>PFM animations</h3>
-        <PfmLogo style="margin-left: 10px" />
+        <h3>Animatios</h3>
       </div>
     </a>
     <div class="leftSide-animationsList">
